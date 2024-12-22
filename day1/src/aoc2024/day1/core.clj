@@ -24,6 +24,14 @@
             (sort right-nums))
        (reduce + 0)))
 
+(defn calculate-similarity
+  "Calculate similarity score by multiplying each left number by its frequency in right list"
+  [left-nums right-nums]
+  (let [right-freqs (frequencies right-nums)]
+    (->> left-nums
+         (map #(* % (get right-freqs % 0)))
+         (reduce + 0))))
+
 (defn part1
   "Solve part 1 of the challenge"
   [input]
@@ -33,5 +41,5 @@
 (defn part2
   "Solve part 2 of the challenge"
   [input]
-  ;; TODO: Implement solution
-  nil)
+  (let [[lefts rights] (parse-input input)]
+    (calculate-similarity lefts rights)))

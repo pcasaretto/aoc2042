@@ -56,10 +56,27 @@
     (is (= 0
            (sut/calculate-distance [1 1 1] [1 1 1])))))
 
+(deftest calculate-similarity-test
+  (testing "Basic similarity calculation"
+    (is (= 31
+           (sut/calculate-similarity [3 4 2 1 3 3] [4 3 5 3 9 3]))))
+
+  (testing "Empty lists"
+    (is (= 0
+           (sut/calculate-similarity [] []))))
+
+  (testing "No matches"
+    (is (= 0
+           (sut/calculate-similarity [1 2 3] [4 5 6]))))
+
+  (testing "All matches"
+    (is (= 6
+           (sut/calculate-similarity [1 2 3] [1 2 3])))))
+
 (deftest part1-test
   (testing "Example case"
     (is (= 11 (sut/part1 example-input)))))
 
 (deftest part2-test
-  (testing "Part 2"
-    (is (= nil (sut/part2 "")))))
+  (testing "Example case"
+    (is (= 31 (sut/part2 example-input)))))

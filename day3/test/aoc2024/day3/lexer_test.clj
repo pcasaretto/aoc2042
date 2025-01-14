@@ -15,6 +15,8 @@
   (testing "Identifiers"
     (is (= [{:type :identifier :value "do_not_mul"}]
            (sut/lex "do_not_mul")))
+    (is (= [{:type :identifier :value "don't"}]
+           (sut/lex "don't")))
     (is (= [{:type :identifier :value "x123"}]
            (sut/lex "x123"))))
 

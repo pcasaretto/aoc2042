@@ -1,7 +1,6 @@
 (ns aoc2024.day3.lexer)
 
 (declare lex-start)  ; Forward declaration since functions refer to each other
-(defmacro dbg [x] `(let [x# ~x] (println "dbg:" '~x "=" x#) x#))
 
 (defn lex-identifier
   "Try to lex an identifier"
@@ -14,6 +13,7 @@
      (nil? first) [lex-start input (conj output {:type :identifier :value (apply str currentIdentifier)})]
      (Character/isLetterOrDigit first) (recur rest output (conj currentIdentifier first))
      (= \_ first) (recur rest output (conj currentIdentifier first))
+     (= \' first) (recur rest output (conj currentIdentifier first))
      :else [lex-start input (conj output {:type :identifier :value (apply str currentIdentifier)})])))
 
 (defn lex-number

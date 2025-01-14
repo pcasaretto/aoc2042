@@ -4,6 +4,12 @@
             [aoc2024.day3.parser :as sut]))
 
 (deftest parsing
+  (testing "function with no args"
+    (is (=
+         [{:type :function-call :name "mul" :args []}]
+         (sut/parse [{:type :identifier :value "mul"}
+                     {:type :leftParen}
+                     {:type :rightParen}]))))
   (testing "simple example"
     (is (=
          [{:type :function-call :name "mul" :args [2 5]}]

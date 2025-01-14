@@ -1,7 +1,4 @@
-(ns aoc2024.day3.parser
-  (:require
-   [aoc2024.day3.lexer :as lexer]))
-
+(ns aoc2024.day3.parser)
 
 (declare expect-function-call)
 (declare expect-number)
@@ -11,6 +8,14 @@
   (when-let [[first & rest] lexemes]
     (cond
       (= (:type first) :comma) (expect-number rest output acc)
+      (= (:type first) :rightParen) [expect-function-call rest (conj output acc)]
+      :else [expect-function-call lexemes output])))
+
+(defn expect-number-or-right-paren
+  [lexemes output acc]
+  (when-let [[first & rest] lexemes]
+    (cond
+      (= (:type first) :number) (expect-comma-or-right-paren rest output (update acc :args conj (:value first)))
       (= (:type first) :rightParen) [expect-function-call rest (conj output acc)]
       :else [expect-function-call lexemes output])))
 
@@ -25,7 +30,7 @@
   [lexemes output acc]
   (when-let [[first & rest] lexemes]
     (if (= (:type first) :leftParen)
-      (expect-number rest output acc)
+      (expect-number-or-right-paren rest output acc)
       [expect-function-call lexemes output])))
 
 (defn expect-function-call

@@ -34,12 +34,24 @@
            (sut/lex "mul(123,456)")))
 
     (is (= [{:type :identifier :value "mul"}
-            {:type :leftBracket}  ; note: different bracket type
+            {:type :leftSquareBracket}  ; note: different bracket type
             {:type :number :value 2}
             {:type :comma}
             {:type :number :value 4}
-            {:type :rightBracket}]
+            {:type :rightSquareBracket}]
            (sut/lex "mul[2,4]")))))
+
+(deftest edge-cases
+  (testing "mul(835,84};)"
+    (is (= [{:type :identifier :value "mul"}
+            {:type :leftParen}
+            {:type :number :value 835}
+            {:type :comma}
+            {:type :number :value 84}
+            {:type :rightCurlyBracket}
+            {:type :semicolon}
+            {:type :rightParen}]
+           (sut/lex "mul(835,84};)")))))
 
 (def example-input "xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))")
 
@@ -52,11 +64,11 @@
             {:type :number :value 4}
             {:type :rightParen}
             {:type :identifier :value "mul"}
-            {:type :leftBracket}
+            {:type :leftSquareBracket}
             {:type :number :value 3}
             {:type :comma}
             {:type :number :value 7}
-            {:type :rightBracket}
+            {:type :rightSquareBracket}
             {:type :identifier :value "do_not_mul"}
             {:type :leftParen}
             {:type :number :value 5}
@@ -68,7 +80,7 @@
             {:type :number :value 32}
             {:type :comma}
             {:type :number :value 64}
-            {:type :rightBracket}
+            {:type :rightSquareBracket}
             {:type :identifier :value "then"}
             {:type :leftParen}
             {:type :identifier :value "mul"}

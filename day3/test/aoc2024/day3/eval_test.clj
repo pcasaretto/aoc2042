@@ -26,8 +26,8 @@
       (is (= {:result 29}
              (eval/eval2 (parser/parse (lexer/lex "mul(2,4)mul(3,7)")) fns {:result 0})))))
   (testing "on/off"
-    (let [fns {"mul" (fn [args context] (println "mul" args context) (if (:do context) (update context :result #(+ % (apply * args))) context))
-               "do" (fn [_ context] (println "do" context) (assoc context :do true))
-               "dont" (fn [_ context] (println "dont" context) (assoc context :do false))}]
+    (let [fns {"mul" (fn [args context]  (if (:do context) (update context :result #(+ % (apply * args))) context))
+               "do" (fn [_ context]  (assoc context :do true))
+               "dont" (fn [_ context]  (assoc context :do false))}]
       (is (= {:result 8 :do false}
              (eval/eval2 (parser/parse (lexer/lex "do()mul(2,4)dont()mul(3,7)")) fns {:result 0}))))))

@@ -41,18 +41,27 @@
            (recur rest lexemes-remaining transformed-output)))))))
 
 (defn expect-type
-  ([type] (expect-type type pass-through-output))
   ([type output-transformation]
    (fn [lexemes output]
      (when-let [[first & rest] lexemes]
        (when (= (:type first) type)
          [rest (output-transformation lexemes output)])))))
 
-(defn expect-identifier [output-transformation] (expect-type :identifier output-transformation))
-(defn expect-comma [] (expect-type :comma))
-(defn expect-number [output-transformation] (expect-type :number output-transformation))
-(defn expect-right-paren [] (expect-type :rightParen))
-(defn expect-left-paren [] (expect-type :leftParen))
+(defn expect-identifier
+  ([] (expect-identifier pass-through-output))
+  ([output-transformation] (expect-type :identifier output-transformation)))
+(defn expect-comma
+  ([] (expect-comma pass-through-output))
+  ([output-transformation] (expect-type :comma output-transformation)))
+(defn expect-number
+  ([] (expect-number pass-through-output))
+  ([output-transformation] (expect-type :number output-transformation)))
+(defn expect-right-paren
+  ([] (expect-right-paren pass-through-output))
+  ([output-transformation] (expect-type :rightParen output-transformation)))
+(defn expect-left-paren
+  ([] (expect-left-paren pass-through-output))
+  ([output-transformation] (expect-type :leftParen output-transformation)))
 
 ;a function call is almost like a regex
 ; identifier leftParen ( number (comma number)*)? rightParen

@@ -4,10 +4,9 @@
   [expectation]
   (fn [lexemes output] (or (expectation lexemes output) [lexemes output])))
 
-; consume-all consumes lexemes that fail the expectation
-; while mutating the output with the output-transformation
-; for lexemes that pass the expectation
 (defn consume-all
+  "consume-all consumes lexemes as long as the expectation fails.
+  When the expectation passes, it consumes those lexemes and transforms the output."
   [expectation]
   (fn [lexemes output]
     (loop [lexemes lexemes
@@ -63,26 +62,27 @@
   ([] (expect-left-paren pass-through-output))
   ([output-transformation] (expect-type :leftParen output-transformation)))
 
-;a function call is almost like a regex
-; identifier leftParen ( number (comma number)*)? rightParen
+(defn expect-function-call-arguments
+  [output-transformation]
+  (expect-optional
+   (expect-all
+    [(expect-number (fn [lexemes output] (output-transformation lexemes output)))
+     (expect-zero-or-more
+      (expect-all
+       [(expect-comma)
+        (expect-number (fn [lexemes output] (output-transformation lexemes output)))]))])))
+
 (defn expect-function-call
   [output-transformation]
   (fn [lexemes output]
     ((expect-all
       [(expect-identifier (fn [[lexeme] output] (assoc output :name (:value lexeme))))
        (expect-left-paren)
-       (expect-optional
-        (expect-all
-         [(expect-number (fn [[lexeme] output] (update output :args (fn [args] (conj args (:value lexeme))))))
-          (expect-zero-or-more
-           (expect-all
-            [(expect-comma)
-             (expect-number (fn [[lexeme] output] (update output :args (fn [args] (conj args (:value lexeme))))))]))]))
+       (expect-function-call-arguments (fn [[lexeme] output] (update output :args (fn [args] (conj args (:value lexeme))))))
        (expect-right-paren)]
       (fn [_ result] (output-transformation output result)))
      lexemes
      {:type :function-call :args []})))
-
 
 (defn parse
   "Convert input lexemes into a sequence of instructions"

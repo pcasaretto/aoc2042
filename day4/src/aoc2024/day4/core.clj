@@ -46,5 +46,30 @@
       parse-grid
       count-xmas))
 
+(defn check-x-mas [grid [row col]]
+  (when (= \A (get-in grid [row col]))
+    (let [first-diagonal [[(- row 1) (- col 1)] [row col] [(+ row 1) (+ col 1)]]
+          second-diagonal [[(- row 1) (+ col 1)] [row col] [(+ row 1) (- col 1)]]
+          first-diagonal-chars (when (every? (fn [[r c]] (in-bounds? grid r c)) first-diagonal)
+                                 (mapv (fn [[r c]] (get-in grid [r c])) first-diagonal))
+          second-diagonal-chars (when (every? (fn [[r c]] (in-bounds? grid r c)) second-diagonal)
+                                  (mapv (fn [[r c]] (get-in grid [r c])) second-diagonal))]
+      (and
+       (or (= first-diagonal-chars [\M \A \S])
+           (= first-diagonal-chars [\S \A \M]))
+       (or (= second-diagonal-chars [\M \A \S])
+           (= second-diagonal-chars [\S \A \M]))))))
+
+(defn count-x-mas [grid]
+  (let [height (count grid)
+        width (count (first grid))]
+    (->> (for [row (range 1 height)
+               col (range 1 width)
+               :when (check-x-mas grid [row col])]
+           1)
+         (reduce + 0))))
+
 (defn part2 [input]
-  nil) 
+  (-> input
+      parse-grid
+      count-x-mas)) 

@@ -26,6 +26,23 @@ MXMXAXMASX")
    [\S \M \M \S \S]
    [\M \S \A \X \X]])
 
+(def x-mas-sample
+  ".M.S......
+..A..MSMS.
+.M.S.MAA..
+..A.ASMSM.
+.M.S.M....
+..........
+S.S.S.S.S.
+.A.A.A.A..
+M.M.M.M.M.
+..........")
+
+(def mixed-pattern
+  "M.M
+.A.
+S.S")
+
 (deftest parse-grid-test
   (testing "parses input into grid"
     (let [grid (sut/parse-grid sample-input)]
@@ -80,6 +97,17 @@ MXMXAXMASX")
   (testing "sample input"
     (is (= 18 (sut/part1 sample-input)))))
 
+(deftest check-x-mas-test
+  (testing "finds complete X-MAS patterns"
+    (let [grid (sut/parse-grid x-mas-sample)]
+      (is (sut/check-x-mas grid [1 2])))) ; complete X-MAS at position [1,2]
+
+  (testing "should not match mixed MAS/SAM patterns"
+    (let [grid (sut/parse-grid mixed-pattern)]
+      ; This pattern has MAS in one diagonal and SAM in the other
+      ; It should not be considered valid
+      (is (not (sut/check-x-mas grid [1 2]))))))
+
 (deftest part2-test
-  (testing "sample input"
-    (is (= nil (sut/part2 sample-input))))) 
+  (testing "counts all X-MAS patterns in the grid"
+    (is (= 9 (sut/part2 x-mas-sample))))) 
